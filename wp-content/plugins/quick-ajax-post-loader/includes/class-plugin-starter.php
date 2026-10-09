@@ -1,0 +1,106 @@
+<?php 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+final class QAPL_Plugin_Starter{
+    private QAPL_Resource_Manager_Interface $resources;
+    private QAPL_Enqueue_Handler_Interface $enqueue;
+
+    public function __construct(QAPL_Resource_Manager_Interface $resources, QAPL_Enqueue_Handler_Interface $enqueue){
+        $this->resources=$resources; //set deps
+        $this->enqueue=$enqueue; //set deps
+    }
+    private function verify_classes(): void {      
+        $classes = [
+            'QAPL_Constants',
+            'QAPL_Initializer',
+            'QAPL_File_Manager',
+            'QAPL_Resource_Manager',
+            'QAPL_Enqueue_Handler',
+            'QAPL_Global_Option_Value_Provider',
+            'QAPL_Taxonomy_Options_Provider',
+            'QAPL_Post_Meta_Value_Provider',
+            'QAPL_Form_Field',
+            'QAPL_Field_Sanitizer',
+            'QAPL_Field_Registry',
+            'QAPL_Form_Field_Factory',
+            'QAPL_Form_Content_Builder',
+            'QAPL_Shortcode_Attributes_Provider',
+            'QAPL_Shortcode_Params_Handler',
+            'QAPL_Shortcode_Post_Meta_Handler',
+            'QAPL_Shortcode_Query_Args_Provider',
+            'QAPL_Shortcode',
+            'QAPL_Shortcode_Generator',
+            'QAPL_Ajax_Frontend_Render',
+            'QAPL_Ajax_Admin_Controller',
+            'QAPL_Ajax_Frontend_Controller',
+            'QAPL_Controller_Registry',
+            'QAPL_Template_Config',
+            'QAPL_Template_Base',
+            'QAPL_Template_Post_Item',
+            'QAPL_Template_Post_Item_Qapl_Full_Background_Image',
+            'QAPL_Template_Load_More_Button',
+            'QAPL_Template_End_Post_Message',
+            'QAPL_Template_No_Post_Message',
+            'QAPL_Template_Empty_Filters',
+            'QAPL_Post_Template_Factory',
+            'QAPL_Post_Template_Context',
+            'QAPL_Updater',
+            'QAPL_Data_Migrator',
+            'QAPL_Update_Validator',
+            'QAPL_Cleaner',
+            'QAPL_Data_Cleaner',
+        ];        
+        QAPL_Utilities::verify_classes_exist($classes, 'Plugin_Starter');
+    }
+    private function verify_admin_classes(): void { 
+        $classes = [
+            'QAPL_Admin_Menu',
+            'QAPL_CPT_Editor_Form',
+            'QAPL_Creator_Post_Type',
+            'QAPL_Creator_Columns',
+            'QAPL_CPT_Creator_Form',
+            'QAPL_Creator_Shortcode_Box',
+            'QAPL_Creator_Editor',
+            'QAPL_Admin_Options_Page_Form',
+            'QAPL_Settings_Tab_Options',
+            'QAPL_Settings_Tab_PHP_Snippet',
+            'QAPL_Settings_Tab_Help',
+            'QAPL_Settings_Tab_Cleanup',
+            'QAPL_Settings_Page',
+        ];
+        QAPL_Utilities::verify_classes_exist($classes, 'Plugin_Starter (admin)');
+    }
+    // all hook registration lives here, loaded files only declare classes and functions
+    private function register_component_hooks(): void {
+        add_shortcode('qapl-quick-ajax', [new QAPL_Shortcode(), 'render_quick_ajax_shortcode']);
+        QAPL_Ajax_Frontend_Controller::register();
+        if (is_admin()) {
+            QAPL_Ajax_Admin_Controller::register();
+        }
+        add_action('init', 'qapl_action_quick_ajax_check_version_and_run_updates');
+        add_action('admin_post_qapl_purge_unused_data', 'qapl_action_quick_ajax_handle_purge_unused_data_request');
+        add_action('admin_notices', 'qapl_action_quick_ajax_display_purge_notice');
+        QAPL_Deprecated_Hooks_Handler::register();
+    }
+    private function register_admin_hooks(): void {
+        QAPL_Creator_Post_Type::init();
+        QAPL_Creator_Columns::init();
+        QAPL_Creator_Shortcode_Box::init();
+        QAPL_Creator_Editor::init();
+        new QAPL_Admin_Menu();
+    }
+    public function start():void{
+        $this->resources->initialize_components(); //init components
+        $this->register_component_hooks();
+        if (is_admin()) {
+            $this->resources->initialize_pages(); //init admin pages
+            $this->register_admin_hooks();
+            $this->verify_admin_classes();
+        } 
+        $this->verify_classes();
+        $this->enqueue->register_hooks(); //enqueue scripts/styles
+        QAPL_Initializer::maybe_run_tests();
+    }
+}

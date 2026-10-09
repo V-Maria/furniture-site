@@ -1,0 +1,922 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Quick Ajax Post Loader\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-07 15:44+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.7.2; wp-6.8\n"
+"X-Domain: quick-ajax-post-loader\n"
+
+#. %s: plugin name
+#: includes/deprecated/class-deprecated-hooks-handler.php:59
+#, php-format
+msgid "%s: Some hooks have been renamed. Please update your code:"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:184
+#: includes/form/class-form-field-factory.php:739
+#: includes/form/class-form-field-factory.php:740
+msgid "A → Z"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:512
+msgid "Add Class to Post Container"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:500
+msgid "Add Class to Taxonomy Filter"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:504
+msgid "Add classes to the filter: class-one, class-two, class-three"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:516
+msgid "Add classes to the post container: class-one, class-two, class-three"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-post-type.php:15
+#: includes/admin/cpt/creator/class-creator-post-type.php:16
+msgid "Add New"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-form.php:253
+#: includes/admin/pages/settings/tabs/class-settings-tab-php-snippet.php:214
+msgid "Additional Settings"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:251
+msgid "After the filter buttons"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:439
+msgid "Apply Quick AJAX CSS Style"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:442
+msgid "Apply Quick AJAX CSS styles and column layout."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:112
+msgid "Ascending - order from lowest to highest"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-columns.php:29
+msgid "Author"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:204
+msgid "Available Sorting Options"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:255
+msgid "Before the filter buttons"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:484
+msgid "Choose a template for displaying post items."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:316
+msgid "Choose a template for displaying the search field."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:587
+msgid ""
+"Choose an icon to display as the loading indicator when the \"Load More\" "
+"button is clicked."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:84
+msgid "Choose Terms"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:28
+msgid "Choose the post type you want to display using AJAX."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:152
+msgid "Choose the sorting criteria for posts."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:786
+msgid ""
+"Choose this option to remove old, unused data from the database. This will "
+"help keep your site clean and efficient. Be aware that if you switch back to "
+"an older version of the plugin, it might not work as expected."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:264
+msgid ""
+"Choose where the search field appears when filter or sorting controls are "
+"displayed."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:503
+#: includes/form/class-form-field-factory.php:515
+msgid "class-name, another-class-name"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:138
+msgid "Comments: Sort by comment count"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:783
+msgid "Confirm Purge of Old Data"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-shortcode-box.php:20
+#: includes/admin/pages/settings/tabs/class-settings-tab-php-snippet.php:271
+msgid "Copied"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-shortcode-box.php:21
+msgid "Copy"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-shortcode-box.php:15
+msgid "Copy and paste this shortcode on the page to display the posts list"
+msgstr ""
+
+#: includes/admin/pages/settings/tabs/class-settings-tab-php-snippet.php:271
+msgid "Copy Code"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:196
+msgid "Custom labels for sorting options"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:631
+msgid ""
+"Customize the \"Load More\" button text. This label will appear on the "
+"button used to load additional posts dynamically. Examples: \"Load More\", "
+"\"Show More\", or \"View More\"."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:607
+msgid ""
+"Customize the \"Read More\" text for your templates. This label will appear "
+"as a link or button for each post item. Examples: \"Read More\", \"Continue "
+"Reading\", or \"Learn More\"."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:619
+msgid ""
+"Customize the \"Show All\" text label for the filter. This label will appear "
+"as an option to display all posts without filtering. Examples: \"Show All\", "
+"\"View All\", or \"Display All\"."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:667
+msgid ""
+"Customize the message shown when no posts match the selected filters. "
+"Examples: \"No posts found\", \"Nothing to display\", or \"Try adjusting "
+"your filters\"."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:679
+msgid ""
+"Customize the message that appears when there are no more posts to load. "
+"Examples: \"No more posts\", \"You have reached the end\", or \"That's all "
+"for now\"."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:655
+msgid ""
+"Customize the search button label. This label will appear on the text button,"
+" or will be read by screen readers when the button shows an icon. Examples: "
+"\"Search\", \"Find\", or \"Go\"."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:643
+msgid ""
+"Customize the search field placeholder. This text will appear inside the "
+"empty search field. Examples: \"Search\", \"Search posts\", or \"Find a "
+"product\"."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:130
+msgid "Date: Sort by publication date"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:148
+msgid "Default Sort By"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:118
+msgid "Default Sort Order"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:772
+msgid "Delete All Data on Uninstall"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:108
+msgid "Descending - order from highest to lowest"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:100
+msgid "Determine the number of posts to be loaded per AJAX request."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:73
+msgid "Display \"Show All\" Button"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:423
+msgid "Display a message when there are no more posts to load via AJAX."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:220
+msgid ""
+"Display taxonomy filter and sorting options in a single row to save space "
+"and improve layout."
+msgstr ""
+
+#. %s: show all button label
+#: includes/form/class-form-field-factory.php:70
+#, php-format
+msgid ""
+"Display the \"%s\" button in the taxonomy filter to reset the filter and "
+"show all posts."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:242
+msgid ""
+"Display the search field in the same row as the taxonomy filter and sorting "
+"options."
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-post-type.php:17
+msgid "Edit Quick Ajax"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:163
+msgid ""
+"Enable a button that allows users to switch between ascending and descending "
+"order."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:231
+msgid "Enable a search field that lets visitors find posts by title."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:39
+msgid "Enable filtering by taxonomy/category."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:396
+msgid "Enable Infinite Scroll"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:62
+msgid "Enable manual selection of taxonomy terms to be used for filtering."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:399
+msgid ""
+"Enable this option to automatically load more posts via AJAX as the user "
+"scrolls down the page."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:387
+msgid ""
+"Enable this option to load the initial set of posts via AJAX on page load. "
+"This can help in cases where caching might cause outdated content to be "
+"displayed."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:425
+msgid "End message content"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:365
+msgid "Enter a list of post IDs to exclude from the query."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:630
+msgid "Enter custom label for Load More"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:606
+msgid "Enter custom label for Read More"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:618
+msgid "Enter custom label for Show All"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:654
+msgid "Enter custom label for the search button"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:642
+msgid "Enter custom placeholder for the search field"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:678
+msgid "Enter message for end of posts"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:666
+msgid "Enter message for no posts found"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:362
+msgid "Excluded Post IDs"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-form.php:90
+#: includes/admin/pages/settings/tabs/class-settings-tab-php-snippet.php:98
+msgid "General Settings"
+msgstr ""
+
+#: includes/admin/pages/settings/tabs/class-settings-tab-php-snippet.php:96
+msgid ""
+"Generate a fully functional PHP snippet to embed your custom AJAX post "
+"loader into your template. No shortcode needed."
+msgstr ""
+
+#: includes/admin/pages/settings/tabs/class-settings-tab-php-snippet.php:270
+msgid "Generate Function"
+msgstr ""
+
+#: includes/admin/pages/settings/tabs/class-settings-tab-options.php:40
+#: includes/admin/pages/settings/tabs/class-settings-tab-options.php:52
+msgid "Global Options"
+msgstr ""
+
+#: includes/admin/pages/settings/tabs/class-settings-tab-help.php:18
+msgid "Help"
+msgstr ""
+
+#: includes/admin/pages/settings/tabs/class-settings-tab-help.php:24
+msgid "Help Content"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:589
+msgid "How to add a new loader icon?"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:486
+msgid "How to add a new post item template?"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:318
+msgid "How to add a new search box template?"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://grzelkowski.com"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://wordpress.org/plugins/quick-ajax-post-loader/"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:373
+msgid "Ignore Sticky Posts"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:239
+msgid "Inline Filter & Search"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:217
+msgid "Inline Filter & Sorting"
+msgstr ""
+
+#: includes/maintenance/class-cleaner.php:96
+msgid "Invalid request. The purge was not performed."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:408
+msgid "Keep Posts Visible While Loading"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:411
+msgid ""
+"Keep the current posts dimmed until new ones load, instead of clearing the "
+"grid."
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-form.php:274
+#: includes/admin/pages/settings/tabs/class-settings-tab-php-snippet.php:222
+msgid "Layout Settings"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:527
+msgid "Load a different number of posts after the initial display."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:384
+msgid "Load Initial Posts via AJAX"
+msgstr ""
+
+#: includes/ajax-render/class-ajax-load-more-renderer.php:60
+#: includes/form/class-form-field-factory.php:629
+#: includes/template-renderers/class-template-base.php:53
+msgid "Load More"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:524
+msgid "Load More Post Quantity"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Load posts with AJAX load more, infinite scroll, and taxonomy filtering. No "
+"page reloads. Great for blogs, portfolios, and custom post types."
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-post-type.php:18
+msgid "New Quick Ajax"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:172
+#: includes/form/class-form-field-factory.php:703
+#: includes/form/class-form-field-factory.php:704
+msgid "Newest"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-post-type.php:21
+msgid "No Items found"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-post-type.php:22
+msgid "No Items found in trash"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:677
+#: includes/template-renderers/class-template-base.php:59
+msgid "No more posts to load"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:665
+#: includes/template-renderers/class-template-base.php:56
+msgid "No posts found"
+msgstr ""
+
+#: includes/ajax-controller/class-ajax-admin-controller.php:47
+#: includes/form/class-form-content-builder.php:311
+msgid "No taxonomy available"
+msgstr ""
+
+#: includes/ajax-controller/class-ajax-admin-controller.php:33
+#: includes/form/class-taxonomy-options-provider.php:26
+msgid "No taxonomy found"
+msgstr ""
+
+#: includes/ajax-controller/class-ajax-admin-controller.php:83
+#: includes/form/class-taxonomy-options-provider.php:42
+msgid "No terms found"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:458
+msgid "Number of Columns"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:176
+#: includes/form/class-form-field-factory.php:715
+#: includes/form/class-form-field-factory.php:716
+msgid "Oldest"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:199
+#: includes/form/class-form-field-factory.php:428
+msgid "Open settings"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:549
+msgid "Override Global Loader Icon"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:331
+msgid "Override Global Search Button Label"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:272
+msgid "Override Global Search Placeholder"
+msgstr ""
+
+#. Author of the plugin
+msgid "Pawel Grzelkowski"
+msgstr ""
+
+#: includes/admin/pages/settings/tabs/class-settings-tab-php-snippet.php:88
+#: includes/admin/pages/settings/tabs/class-settings-tab-php-snippet.php:93
+msgid "PHP Snippet Generator"
+msgstr ""
+
+#: includes/maintenance/class-cleaner.php:94
+msgid "Please confirm the purge by selecting the checkbox before submitting."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:180
+#: includes/form/class-form-field-factory.php:727
+#: includes/form/class-form-field-factory.php:728
+msgid "Popular"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:535
+msgid "Posts Per Load (After Initial)"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:94
+msgid "Posts Per Page"
+msgstr ""
+
+#: includes/admin/pages/settings/tabs/class-settings-tab-cleanup.php:20
+#: includes/admin/pages/settings/tabs/class-settings-tab-cleanup.php:28
+msgid "Purge Old Data"
+msgstr ""
+
+#: includes/admin/pages/settings/tabs/class-settings-tab-cleanup.php:34
+msgid "Purge Unused Data"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-post-type.php:23
+msgid "Quick AJAX"
+msgstr ""
+
+#. Name of the plugin
+msgid "Quick Ajax Post Loader"
+msgstr ""
+
+#: includes/admin/pages/settings/class-settings-page.php:10
+msgid "Quick AJAX settings"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-post-type.php:14
+msgid "Quick Ajax Shortcode"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-post-type.php:13
+msgid "Quick Ajax Shortcodes"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:192
+#: includes/form/class-form-field-factory.php:763
+#: includes/form/class-form-field-factory.php:764
+msgid "Random"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:142
+msgid "Random: Random order"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:605
+#: includes/template-renderers/class-template-base.php:50
+msgid "Read More"
+msgstr ""
+
+#: includes/admin/pages/settings/tabs/class-settings-tab-options.php:72
+msgid "Save Settings"
+msgstr ""
+
+#: includes/ajax-render/class-ajax-filter-menu-renderer.php:364
+#: includes/ajax-render/class-ajax-filter-menu-renderer.php:395
+#: includes/form/class-form-field-factory.php:283
+#: includes/form/class-form-field-factory.php:342
+#: includes/form/class-form-field-factory.php:641
+#: includes/form/class-form-field-factory.php:653
+msgid "Search"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:345
+msgid "Search Button Label"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:286
+msgid "Search Field Placeholder"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:260
+msgid "Search Field Position"
+msgstr ""
+
+#: includes/admin/pages/settings/tabs/class-settings-tab-options.php:59
+msgid "Search Labels"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-post-type.php:20
+msgid "Search Quick Ajax"
+msgstr ""
+
+#: includes/maintenance/class-cleaner.php:95
+msgid "Security check failed. Please reload the page and try again."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:583
+msgid "Select Loader Icon"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:480
+msgid "Select Post Item Template"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:24
+msgid "Select Post Type"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:312
+msgid "Select Search Box Template"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:59
+msgid "Select Specific Terms"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:47
+msgid "Select Taxonomy"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:86
+msgid ""
+"Select the specific terms to be used for filtering posts. If left empty, no "
+"results will be shown."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:51
+msgid "Select the taxonomy to be used for filtering posts."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:208
+msgid "Select which sorting options will be available to users."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:737
+msgid "Set \"A → Z\" Label"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:675
+msgid "Set \"End of Posts\" Message"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:627
+msgid "Set \"Load More\" Label"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:701
+msgid "Set \"Newest\" Label"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:663
+msgid "Set \"No Posts Found\" Message"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:713
+msgid "Set \"Oldest\" Label"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:725
+msgid "Set \"Popular\" Label"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:761
+msgid "Set \"Random\" Label"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:603
+msgid "Set \"Read More\" Label"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:615
+msgid "Set \"Show All\" Label"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:749
+msgid "Set \"Z → A\" Label"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:552
+msgid "Set a different loader icon than the one specified in global options."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:334
+msgid ""
+"Set a different search button label than the one specified in global options."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:275
+msgid ""
+"Set a different search field placeholder than the one specified in global "
+"options."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:538
+msgid ""
+"Set how many posts to load each time the \"Load More\" button is clicked."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:651
+msgid "Set Search Button Label"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:639
+msgid "Set Search Field Placeholder"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:741
+msgid ""
+"Set the label for sorting posts alphabetically (A to Z) based on the post "
+"title. Examples: \"Alphabetical\", \"A → Z\", \"Sort by Name\"."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:753
+msgid ""
+"Set the label for sorting posts alphabetically (Z to A) based on the post "
+"title. Examples: \"Reverse Alphabetical\", \"Z → A\", \"Sort by Name "
+"Descending\"."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:729
+msgid ""
+"Set the label for sorting posts by the highest number of comments. Examples: "
+"\"Popular\", \"Trending\", \"Most Discussed\"."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:705
+msgid ""
+"Set the label for sorting posts from newest to oldest (based on publication "
+"date). Examples: \"Newest\", \"Latest\", \"Recent\"."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:717
+msgid ""
+"Set the label for sorting posts from oldest to newest (based on publication "
+"date). Examples: \"Oldest\", \"First\", \"Earliest\"."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:765
+msgid ""
+"Set the label for sorting posts in a random order. Examples: \"Shuffle\", "
+"\"Random\", \"Surprise Me\"."
+msgstr ""
+
+#. %s is the search button label set in the global plugin options.
+#: includes/form/class-form-field-factory.php:352
+#, php-format
+msgid ""
+"Set the search button label for this shortcode. If left empty, the global "
+"label (%s) is used."
+msgstr ""
+
+#. %s is the placeholder set in the global plugin options.
+#: includes/form/class-form-field-factory.php:293
+#, php-format
+msgid ""
+"Set the search field placeholder for this shortcode. If left empty, the "
+"global placeholder (%s) is used."
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:30
+#: includes/admin/class-admin-menu.php:31
+msgid "Settings & Features"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-columns.php:24
+msgid "Shortcode"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-post-type.php:24
+msgid "Shortcodes"
+msgstr ""
+
+#: includes/ajax-render/class-ajax-filter-menu-renderer.php:107
+#: includes/form/class-form-field-factory.php:68
+#: includes/form/class-form-field-factory.php:617
+msgid "Show All"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:420
+msgid "Show End Message"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:228
+msgid "Show Search Field"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:160
+msgid "Show Sorting Button"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:36
+msgid "Show Taxonomy Filter"
+msgstr ""
+
+#: includes/ajax-render/class-ajax-filter-menu-renderer.php:250
+msgid "Sort by"
+msgstr ""
+
+#: includes/admin/pages/settings/tabs/class-settings-tab-options.php:62
+msgid "Sorting Option Labels"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:197
+msgid "Sorting option labels can be changed in plugin settings."
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-form.php:218
+#: includes/admin/pages/settings/tabs/class-settings-tab-php-snippet.php:199
+msgid "Sorting Settings"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:122
+msgid "Specify the order of posts."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:462
+msgid "Specify the quantity of columns."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:376
+msgid ""
+"Specify to ignore sticky posts, treating them as regular posts in the query."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:426
+msgid "The end message text can be changed in plugin settings."
+msgstr ""
+
+#. %1$s is the required PHP version, %2$s is the current PHP version.
+#: quick-ajax-post-loader.php:27
+#, php-format
+msgid "This plugin requires PHP %1$s or higher. Your server is running %2$s."
+msgstr ""
+
+#. %1$s is the minimum supported WordPress version, %2$s is the current WordPress version.
+#: quick-ajax-post-loader.php:41
+#, php-format
+msgid ""
+"This plugin was tested only with WordPress %1$s or higher. Your site is "
+"running %2$s. It may not work correctly."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:134
+msgid "Title: Sort by post title"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:590
+msgid ""
+"To add a new loader icon you need to create a new PHP file in your theme's "
+"folder."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:487
+msgid ""
+"To add a new post item template you need to create a new PHP file in your "
+"theme's folder."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:319
+msgid ""
+"To add a new search box template you need to create a new PHP file in your "
+"theme's folder."
+msgstr ""
+
+#: includes/admin/pages/settings/tabs/class-settings-tab-options.php:69
+msgid "Uninstall"
+msgstr ""
+
+#: includes/maintenance/class-cleaner.php:93
+msgid "Unused data has been purged successfully."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:321
+#: includes/form/class-form-field-factory.php:489
+#: includes/form/class-form-field-factory.php:592
+msgid "View detailed guide"
+msgstr ""
+
+#: includes/admin/cpt/creator/class-creator-post-type.php:19
+msgid "View Quick Ajax"
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:775
+msgid ""
+"When enabled, deleting the plugin will permanently remove all its data: "
+"global settings and all created shortcodes. Leave disabled to keep your "
+"configuration in case you reinstall the plugin later."
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:39
+#: includes/maintenance/class-cleaner.php:22
+#: includes/maintenance/class-cleaner.php:49
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: includes/form/class-form-field-factory.php:188
+#: includes/form/class-form-field-factory.php:751
+#: includes/form/class-form-field-factory.php:752
+msgid "Z → A"
+msgstr ""

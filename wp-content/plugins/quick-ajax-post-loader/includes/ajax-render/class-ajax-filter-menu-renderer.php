@@ -1,0 +1,495 @@
+<?php 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+final class QAPL_Ajax_Filter_Menu_Renderer{
+    private $file_manager;
+    private $helper;
+    private $global_options;
+
+    public function __construct(QAPL_Template_Locator_Interface $file_manager, QAPL_Ajax_Helper $helper, array $global_options = []) {
+        $this->file_manager     = $file_manager;
+        $this->helper           = $helper;
+        $this->global_options   = $global_options;
+    }
+
+    private function get_term_ids_with_posts(array $term_ids, string $taxonomy, string $post_type, array $excluded_post_ids): array {
+        if (empty($term_ids)) {
+            return [];
+        }
+        // phpcs:disable WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in -- intentional exclusion of rendered posts
+        // phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- taxonomy filtering is required
+        $matching_post_ids = get_posts([
+            'post_type'      => $post_type,
+            'post_status'    => 'publish',
+            'post__not_in'   => $excluded_post_ids,
+            'posts_per_page' => -1,
+            'no_found_rows'  => true,
+            'fields'         => 'ids',
+            'tax_query'      => [
+                [
+                    'taxonomy'         => $taxonomy,
+                    'field'            => 'term_id',
+                    'terms'            => $term_ids,
+                    'operator'         => 'IN',
+                    'include_children' => false, // caller already expanded children into $term_ids
+                ],
+            ],
+        ]);
+        // phpcs:enable WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in
+        // phpcs:enable WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+
+        if (empty($matching_post_ids)) {
+            return [];
+        }
+        $terms = wp_get_object_terms($matching_post_ids, $taxonomy, ['fields' => 'ids']);
+        return is_wp_error($terms) ? [] : array_map('intval', $terms);
+    }
+    /**
+     * Render taxonomy terms filter if conditions are met.
+     *
+     * This method allows passing a taxonomy directly, but if it's not provided,
+     * it tries to use the 'selected_taxonomy' value from $source_args.
+     * The 'selected_taxonomy' exists only if a taxonomy has been chosen.
+     * If a taxonomy has been chosen, the filter will be rendered.
+     * In the future, there might be an option to select a taxonomy but not display the filter itself,
+     * so this method should also accommodate such a scenario if implemented.
+     */
+    public function render_taxonomy_terms_filter($taxonomy, $query_args, $source_args, $layout, $attributes, $quick_ajax_id){
+        if (empty($query_args)) {
+            return false;
+        }
+        if(!$taxonomy){
+            $taxonomy = $source_args['selected_taxonomy'];
+        }
+
+        $terms_args = array(
+            'taxonomy'     => $taxonomy,
+            'object_type'  => array($query_args['post_type']),
+            'hide_empty'   => true,
+        );            
+        // only include specific terms if selected_terms is not empty
+        if (!empty($source_args['selected_terms']) && is_array($source_args['selected_terms'])) {
+            $terms_args['include'] = $source_args['selected_terms'];
+        }           
+        $terms = get_terms($terms_args);      
+        $terms_count = is_array($terms) ? count($terms) : 0;
+        if (is_wp_error($terms) || !$this->should_render_filter_menu($terms_count)) {
+            return '';
+        }
+
+        $block_id = 'quick-ajax-filter-'.$quick_ajax_id;
+        $class_container = 'quick-ajax-filter-container';
+        if (!empty($layout[QAPL_Constants::ATTRIBUTE_QUICK_AJAX_CSS_STYLE])) {
+            $class_container .= ' quick-ajax-theme';
+        }
+        if (!empty(trim($layout[QAPL_Constants::ATTRIBUTE_TAXONOMY_FILTER_CLASS] ?? ''))) {
+            $class_container .= ' ' . $layout[QAPL_Constants::ATTRIBUTE_TAXONOMY_FILTER_CLASS];
+        }           
+        $container_class = $this->helper->extract_classes_from_string($class_container);
+        ob_start(); // Start output buffering
+
+        do_action(QAPL_Constants::HOOK_FILTER_CONTAINER_BEFORE, $quick_ajax_id);
+        echo '<div id="'.esc_attr($block_id).'" class="'.esc_attr($container_class).'">';
+        do_action(QAPL_Constants::HOOK_FILTER_CONTAINER_START, $quick_ajax_id);
+        
+        $attributes[QAPL_Constants::ATTRIBUTE_QUICK_AJAX_ID] = $quick_ajax_id;            
+        $navigation_buttons = [];                
+        $button_base = [
+            'data-button' => QAPL_Constants::TERM_FILTER_BUTTON_DATA_BUTTON,
+            'template' => $this->file_manager->get_taxonomy_filter_button_template(),
+            'data-attributes' => $attributes,
+        ];
+        $display_show_all_button = isset($attributes[QAPL_Constants::ATTRIBUTE_DISPLAY_SHOW_ALL_BUTTON]) ? $attributes[QAPL_Constants::ATTRIBUTE_DISPLAY_SHOW_ALL_BUTTON] : QAPL_Constants::LAYOUT_SETTING_DISPLAY_SHOW_ALL_BUTTON_DEFAULT;
+        $has_active_button = false;
+        if($display_show_all_button === 1){
+            $show_all_label = !empty($this->global_options['show_all_label']) ? $this->global_options['show_all_label'] : __('Show All', 'quick-ajax-post-loader');
+            $show_all_button = [                    
+                'term_id' => 'none',
+                'taxonomy' => $taxonomy,
+                'template' => $button_base['template'],
+                'button_label' => $show_all_label,
+                'data-button' => $button_base['data-button'],
+                'data-action' => $source_args,
+                'data-attributes' => $button_base['data-attributes'],
+                'is_active' => true,
+            ];
+            $navigation_buttons[] = $show_all_button;
+            $has_active_button = true;
+        }
+        $exclude_ids = (isset($query_args['post__not_in'])) ? $query_args['post__not_in'] : [];
+        // build check-list per term: term itself + its children for hierarchical taxonomies
+        // (mirrors WP_Query's default include_children => true behavior for tax_query)
+        $term_check_map = [];
+        $all_check_ids  = [];
+        foreach ($terms as $term) {
+            $check_ids = [(int) $term->term_id];
+            if (is_taxonomy_hierarchical($term->taxonomy)) {
+                $children = get_term_children($term->term_id, $term->taxonomy); // cached term hierarchy, no extra query
+                if (!is_wp_error($children)) {
+                    $check_ids = array_merge($check_ids, array_map('intval', $children));
+                }
+            }
+            $term_check_map[$term->term_id] = $check_ids;
+            $all_check_ids = array_merge($all_check_ids, $check_ids);
+        }
+        $term_ids_with_posts = $this->get_term_ids_with_posts(array_unique($all_check_ids), $taxonomy, $query_args['post_type'], $exclude_ids);
+
+        foreach ( $terms as $term ) {
+            $not_empty = (bool) array_intersect($term_check_map[$term->term_id], $term_ids_with_posts);
+            if($not_empty){
+                $data_action = $source_args;
+                $data_action['selected_terms'] = [$term->term_id];
+                $term_button_data = [                        
+                    'term_id' => $term->term_id,
+                    'taxonomy' => $term->taxonomy,
+                    'template' => $button_base['template'],
+                    'button_label' => $term->name,
+                    'data-button' => $button_base['data-button'],
+                    'data-action' => $data_action,
+                    'data-attributes' => $button_base['data-attributes'],
+                    'is_active' => false,
+                ];
+                //if "show all" disabled and no active yet make first term active
+                if (!$has_active_button) {
+                    $term_button_data['is_active'] = true;
+                    $has_active_button = true;
+                }
+                $navigation_buttons[] = $term_button_data;
+            }
+        }
+        
+        $navigation_buttons = apply_filters(QAPL_Constants::HOOK_MODIFY_TAXONOMY_FILTER_BUTTONS, $navigation_buttons, $quick_ajax_id);
+        $filter_buttons='';
+        foreach ( $navigation_buttons as $button ) {
+            $filter_buttons .= $this->update_button_template($button);
+        }
+        echo wp_kses_post($filter_buttons);
+        
+        do_action(QAPL_Constants::HOOK_FILTER_CONTAINER_END, $quick_ajax_id);
+        echo '</div>';
+        do_action(QAPL_Constants::HOOK_FILTER_CONTAINER_AFTER, $quick_ajax_id);
+
+        $output = ob_get_clean(); // Get the buffered content into a variable
+        return $output; // Return the content
+    }
+
+    public function render_sort_options($sort_options, $layout, $query_args, $attributes, $source_args, $quick_ajax_id) {
+        $block_id = 'quick-ajax-sort-options-'.$quick_ajax_id;
+        $class_container = 'quick-ajax-sort-options-container';
+        if (!empty($layout[QAPL_Constants::ATTRIBUTE_QUICK_AJAX_CSS_STYLE])) {
+            $class_container .= ' quick-ajax-theme';
+        }       
+        $container_class = $this->helper->extract_classes_from_string($class_container);
+        $sort_buttons ='';
+        $allowed_button_html = [
+            'div' => [
+                'id' => [],
+                'class' => [],
+            ],
+            'select' => [
+                'id' => [],
+                'class' => [],
+                'name' => [],
+                'aria-label' => [],
+            ],
+            'option' => [
+                'id' => [],
+                'class' => [],
+                'value' => [],
+                'selected' => [],
+            ],
+            'span' => [
+                'id' => [],
+                'class' => [],
+                'data-button' => [],
+                'data-attributes' => [],
+                'data-action' => [],
+            ],
+            'p' => [
+                'id' => [],
+                'class' => [],
+            ]
+        ];
+
+        ob_start(); // Start output buffering
+
+        echo '<div id="'.esc_attr($block_id).'" class="'.esc_attr($container_class).'">';
+        if(isset($sort_options) && is_array($sort_options)){
+            $field = QAPL_Form_Field_Factory::build_select_sort_button_options_field($this->global_options);
+            $default_sort_options = $field->get_options();
+            $label_map = [];
+            foreach ($default_sort_options as $option) {
+                $label_map[$option['value']] = $option['label'];
+            }
+
+            $sorted_options = [];
+            foreach ($sort_options as $value) {
+                $parts = explode('-', $value); 
+                $orderby = $parts[0];
+                $order = strtoupper($parts[1] ?? 'DESC');
+                $label = $label_map[$value] ?? ucfirst($orderby) . ' (' . ucfirst(strtolower($order)) . ')';
+
+                $sorted_options[] = [
+                    'orderby' => $orderby,
+                    'order'   => $order,
+                    'label'   => $label,
+                ];
+            }
+            $sorted_options = apply_filters(QAPL_Constants::HOOK_MODIFY_SORTING_OPTIONS_VARIANTS, $sorted_options, $quick_ajax_id);
+            $filtered_orderby_options = [];
+            foreach ($sorted_options as $option) {
+                $filtered_orderby_options[] = [
+                    'value' => strtolower($option['orderby']) . '-' . strtolower($option['order']),
+                    'label' => $option['label'],
+                ];
+            }
+
+            $button_option = [
+                'label'   => __('Sort by', 'quick-ajax-post-loader'),
+                // unique per instance - the script finds the select by name, so several instances can share it
+                'id' => 'quick-ajax-sort-select-'.$quick_ajax_id,
+                'name' => 'quick_ajax_sort_option',
+                'options' => $filtered_orderby_options
+            ];
+            $sort_buttons .= $this->create_sort_button($button_option, $query_args, $attributes, $source_args, $quick_ajax_id);            
+        }
+        echo wp_kses($sort_buttons, $allowed_button_html);
+        
+        echo '</div>';
+        
+        $output = ob_get_clean(); // Get the buffered content into a variable
+        return $output; // Return the content
+    }
+    private function create_sort_button($button_data, $query_args, $attributes, $source_args, $quick_ajax_id) {         
+        $attributes[QAPL_Constants::ATTRIBUTE_QUICK_AJAX_ID] = $quick_ajax_id;
+        $sort_option = '<div class="quick-ajax-sort-option-wrapper">';
+        $default_option = strtolower($query_args['orderby']).'-'.strtolower($query_args['order']);
+        // escape the aria-label
+        $aria_label = isset($button_data['label']) ? esc_attr($button_data['label']) : '';
+        $sort_option .= '<select id="'.esc_attr($button_data['id']).'" name="'.esc_attr($button_data['name']).'" aria-label="'.$aria_label.'">';
+        foreach ($button_data['options'] as $option) {
+            $value = esc_attr($option['value']);
+            $label = esc_html($option['label']);
+            $selected = ($default_option === $option['value']) ? ' selected' : '';
+            $sort_option .= '<option value="' . $value . '"'.$selected.'>' . $label . '</option>';
+        }
+        $sort_option .= '</select>';
+        $sort_option .= '<span class="quick-ajax-settings" data-button="'.QAPL_Constants::SORT_OPTION_BUTTON_DATA_BUTTON.'" data-attributes="' . esc_attr(wp_json_encode($attributes)) . '" data-action="' . esc_attr(wp_json_encode($source_args)) . '"></span>';
+        $sort_option .= '</div>';                      
+        return $sort_option;
+    }
+    /**
+     * Accepts the named options array and, for backward compatibility, a plain
+     * position string as passed by themes before the array was introduced.
+     */
+    private function normalize_search_options($search_options): array {
+        if (is_string($search_options)) {
+            $search_options = [QAPL_Constants::SEARCH_OPTION_POSITION => $search_options];
+        }
+        if (!is_array($search_options)) {
+            $search_options = [];
+        }
+        $position = isset($search_options[QAPL_Constants::SEARCH_OPTION_POSITION])
+            ? sanitize_text_field($search_options[QAPL_Constants::SEARCH_OPTION_POSITION])
+            : '';
+        // any unknown value falls back to the default position
+        if ($position !== QAPL_Constants::QUERY_SETTING_SEARCH_FIELD_POSITION_BEFORE_FILTERS) {
+            $position = QAPL_Constants::QUERY_SETTING_SEARCH_FIELD_POSITION_DEFAULT;
+        }
+        $text_value = function ($key) use ($search_options) {
+            return isset($search_options[$key]) && is_string($search_options[$key])
+                ? trim($search_options[$key])
+                : '';
+        };
+        return [
+            QAPL_Constants::SEARCH_OPTION_TEMPLATE     => $text_value(QAPL_Constants::SEARCH_OPTION_TEMPLATE),
+            QAPL_Constants::SEARCH_OPTION_POSITION     => $position,
+            QAPL_Constants::SEARCH_OPTION_PLACEHOLDER  => $text_value(QAPL_Constants::SEARCH_OPTION_PLACEHOLDER),
+            QAPL_Constants::SEARCH_OPTION_BUTTON_LABEL => $text_value(QAPL_Constants::SEARCH_OPTION_BUTTON_LABEL),
+        ];
+    }
+    public function render_search_field($layout, $attributes, $source_args, $quick_ajax_id, $search_options = []) {
+        $search_options = $this->normalize_search_options($search_options);
+        // only the position is used here, the rest travels with the options array
+        $position = $search_options[QAPL_Constants::SEARCH_OPTION_POSITION];
+        $block_id = 'quick-ajax-search-'.$quick_ajax_id;
+        $class_container = 'quick-ajax-search-container';
+        // position modifier - needed inside the inline controls container, where flex order decides the layout
+        $class_container .= ($position === QAPL_Constants::QUERY_SETTING_SEARCH_FIELD_POSITION_BEFORE_FILTERS)
+            ? ' search-before-filters'
+            : ' search-after-filters';
+        if (!empty($layout[QAPL_Constants::ATTRIBUTE_QUICK_AJAX_CSS_STYLE])) {
+            $class_container .= ' quick-ajax-theme';
+        }
+        $container_class = $this->helper->extract_classes_from_string($class_container);
+        $allowed_search_html = [
+            'div' => ['id' => [], 'class' => []],
+            'input' => [
+                'type' => [], 'id' => [], 'class' => [], 'name' => [],
+                'value' => [], 'placeholder' => [], 'aria-label' => [], 'autocomplete' => [],
+            ],
+            'button' => ['type' => [], 'id' => [], 'class' => [], 'aria-label' => []],
+            'span' => [
+                'id' => [], 'class' => [],
+                'data-button' => [], 'data-attributes' => [], 'data-action' => [],
+            ],
+            // inline icon - wp_kses strips svg markup unless every tag and attribute is listed
+            'svg' => [
+                'class' => [], 'xmlns' => [], 'viewbox' => [], 'width' => [], 'height' => [],
+                'fill' => [], 'aria-hidden' => [], 'focusable' => [],
+            ],
+            'g' => ['fill' => [], 'stroke' => [], 'stroke-width' => [], 'stroke-linecap' => []],
+            'circle' => ['cx' => [], 'cy' => [], 'r' => []],
+            'path' => ['d' => []],
+        ];
+        ob_start();
+        echo '<div id="'.esc_attr($block_id).'" class="'.esc_attr($container_class).'">';
+        echo wp_kses($this->create_search_input($attributes, $source_args, $quick_ajax_id, $search_options), $allowed_search_html);
+        echo '</div>';
+        return ob_get_clean();
+    }
+    private function create_search_input($attributes, $source_args, $quick_ajax_id, $search_options = []) {
+        $attributes[QAPL_Constants::ATTRIBUTE_QUICK_AJAX_ID] = $quick_ajax_id;
+        $input_id = 'quick-ajax-search-input-'.$quick_ajax_id;
+        $current_phrase = isset($source_args['s']) ? sanitize_text_field($source_args['s']) : '';
+        $button_label = $search_options[QAPL_Constants::SEARCH_OPTION_BUTTON_LABEL] ?? '';
+        $template_name = $search_options[QAPL_Constants::SEARCH_OPTION_TEMPLATE] ?? '';
+        // per-shortcode placeholder wins, then the global option, then the translated default
+        $label = $search_options[QAPL_Constants::SEARCH_OPTION_PLACEHOLDER] ?? '';
+        if ($label === '') {
+            $label = !empty($this->global_options['search_placeholder'])
+                ? $this->global_options['search_placeholder']
+                : __('Search', 'quick-ajax-post-loader');
+        }
+
+        // the input is always built here - a template can place it, never change it
+        $input = '<input type="search" id="'.esc_attr($input_id).'" class="qapl-search-input"'
+            .' name="quick_ajax_search_option" value="'.esc_attr($current_phrase).'"'
+            .' placeholder="'.esc_attr($label).'" aria-label="'.esc_attr($label).'" autocomplete="off" />';
+
+        // the wrapper stays in PHP - the click handler reaches the input through it
+        $search_field = '<div class="quick-ajax-search-wrapper">';
+        $search_field .= $this->create_search_box($input, $button_label, $template_name);
+        $search_field .= '</div>';
+        // the settings sit next to the wrapper - the script looks for them inside the container
+        $search_field .= '<span class="quick-ajax-settings" data-button="'.QAPL_Constants::SEARCH_FIELD_BUTTON_DATA_BUTTON.'"'
+            .' data-attributes="'.esc_attr(wp_json_encode($attributes)).'"'
+            .' data-action="'.esc_attr(wp_json_encode($source_args)).'"></span>';
+        return $search_field;
+    }
+    private function create_search_box($input, $button_label = '', $template_name = '') {
+        $box_template = $this->file_manager->get_search_box_template($template_name);
+        //without a template the field still works, only the button is missing
+        if (empty($box_template) || !file_exists($box_template)) {
+            return $input;
+        }
+        ob_start();
+        include($box_template);
+        $box = ob_get_clean();
+        // per-shortcode label wins, then the global option, then the translated default
+        if ($button_label === '') {
+            $button_label = !empty($this->global_options['search_button_label'])
+                ? $this->global_options['search_button_label']
+                : __('Search', 'quick-ajax-post-loader');
+        }
+        //same token as the taxonomy filter button - screen reader name of the icon button, visible text in a text-only template
+        $box = str_replace('QUICK_AJAX_LABEL', esc_attr($button_label), $box);
+        //the ready input is injected, so a template decides where it sits but not how it looks
+        return str_replace('QUICK_AJAX_SEARCH_FIELD', $input, $box);
+    }
+    public function update_button_template($button_data) {
+        $button_label = isset($button_data['button_label']) ? esc_html($button_data['button_label']) : '';
+        if (empty($button_label)){
+            return '';
+        }
+        if (empty($button_data['template']) || !file_exists($button_data['template'])) {
+        //skip rendering if template is missing or invalid
+            return '';
+        }
+        if($button_data['data-button'] === QAPL_Constants::LOAD_MORE_BUTTON_DATA_BUTTON){
+            $quick_ajax_id = $button_data['data-attributes'][QAPL_Constants::ATTRIBUTE_QUICK_AJAX_ID] ?? '';
+            $load_more_settings = [
+                'quick_ajax_id' => $quick_ajax_id,
+                'template_name' => 'load-more-button',
+                // injected, so the factory does not reach for get_option() itself
+                'global_options' => $this->global_options,
+            ];
+            $qapl_load_more_template = QAPL_Post_Template_Factory::get_template($load_more_settings);
+            QAPL_Post_Template_Context::set_template($qapl_load_more_template);
+        }
+        ob_start();
+        include($button_data['template']);
+        $content = ob_get_clean();
+        $modified_content = $this->add_button_data($content, $button_data);
+        QAPL_Post_Template_Context::clear_template();
+        return $modified_content;
+    }
+    private function add_button_data($content, $button_data) {
+        //encode json safely
+        $button_data_attributes = htmlspecialchars(wp_json_encode($button_data['data-attributes']), ENT_QUOTES, 'UTF-8');
+        $button_data_action = htmlspecialchars(wp_json_encode($button_data['data-action']), ENT_QUOTES, 'UTF-8');        
+        //escape for regex    
+        $button_type = htmlspecialchars($button_data['data-button']);
+        $button_type_escaped = preg_quote($button_type, '/');
+        $regex = '/<([^>]+)data-button="'.$button_type_escaped.'"([^>]*)>/';
+        
+        $modified_content = preg_replace_callback(
+            $regex,
+            function ($matches) use ($button_type_escaped, $button_data_action, $button_data_attributes) {
+                //$matches[0] = <div class="qapl-filter-button" data-button="quick-ajax-filter-button" id="id">
+                //$matches[1] = div class="qapl-filter-button"
+                //$matches[2] = id="id"
+                
+                $full_match = $matches[0];
+                //update or add 'data-action'
+                if (preg_match('/data-action="[^"]*"/', $full_match)) {
+                    //if 'data-action' exists, replace it
+                    $full_match = preg_replace('/data-action="[^"]*"/', 'data-action="' . $button_data_action . '"', $full_match);
+                } else {
+                    // if 'data-action' does not exist, add it
+                    $full_match = preg_replace('/(data-button="'.$button_type_escaped.'")/', '$1 data-action="' . $button_data_action . '"', $full_match);
+                }
+                //update or add 'data-attributes'
+                if (preg_match('/data-attributes="[^"]*"/', $full_match)) {
+                    //if 'data-attributes' exists, replace it
+                    $full_match = preg_replace('/data-attributes="[^"]*"/', 'data-attributes="' . $button_data_attributes . '"', $full_match);
+                } else {
+                    //if 'data-attributes' does not exist, add it
+                    $full_match = preg_replace('/(data-button="'.$button_type_escaped.'")/', '$1 data-attributes="' . $button_data_attributes . '"', $full_match);
+                }
+                return $full_match;
+            },
+            $content
+        );
+        //set active for button - Show All as default
+        if (!empty($button_data['is_active'])) {
+            $modified_content = preg_replace(
+                '/(<[^>]*class=")([^"]*)"([^>]*data-button="' . $button_type_escaped . '"[^>]*>)/',
+                '$1$2 active"$3',
+                $modified_content,
+                1
+            );
+        }
+        
+        //Add button_label if button element contains THE_LABEL
+        $button_label = htmlspecialchars($button_data['button_label']);
+        $label_regex = sprintf('/<(\w+)\s[^>]*data-button="%s"[^>]*>QUICK_AJAX_LABEL<\/\\1>/s', $button_type_escaped);
+        $modified_content = preg_replace_callback(
+            $label_regex,
+            function ($matches) use ($button_label) {
+                $full_match = $matches[0];
+                $label_replaced = str_replace('QUICK_AJAX_LABEL', $button_label, $full_match);
+                return $label_replaced;
+            },
+            $modified_content
+        );
+        return $modified_content;
+    }
+    private function should_render_filter_menu(int $available_terms_count): bool {
+        // render menu only if there is real choice
+        return $available_terms_count > 1;
+    }
+
+}

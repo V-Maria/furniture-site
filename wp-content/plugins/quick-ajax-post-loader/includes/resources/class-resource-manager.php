@@ -1,0 +1,115 @@
+<?php 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+final class QAPL_Resource_Manager implements QAPL_Resource_Manager_Interface {
+
+    private QAPL_File_Manager_Interface $file_manager;
+
+    // constants for page files
+    private const PAGE_FILES = [
+        'class-admin-menu'                  => 'includes/admin/class-admin-menu.php', //main admin menu and submenu
+
+        //CPT
+        'class-post-form'                   => 'includes/admin/cpt/class-cpt-editor-form.php', //abstract form for post type meta box
+        // creator CPT
+        'class-creator-post-type'           => 'includes/admin/cpt/creator/class-creator-post-type.php',
+        'class-creator-columns'             => 'includes/admin/cpt/creator/class-creator-columns.php',
+        'class-creator-form'                => 'includes/admin/cpt/creator/class-creator-form.php',
+        'class-creator-shortcode-box'       => 'includes/admin/cpt/creator/class-creator-shortcode-box.php',
+        'class-creator-editor'              => 'includes/admin/cpt/creator/class-creator-editor.php',
+        
+        //admin pages
+        'class-options-form'                => 'includes/admin/pages/class-admin-options-page-form.php', //abstract form for option page
+        // settings page
+        'interface-settings-tab'            => 'includes/admin/pages/settings/tabs/interface-settings-tab.php',
+        'class-settings-tab-options'        => 'includes/admin/pages/settings/tabs/class-settings-tab-options.php',
+        'class-settings-tab-php-snippet'    => 'includes/admin/pages/settings/tabs/class-settings-tab-php-snippet.php',
+        'class-settings-tab-help'           => 'includes/admin/pages/settings/tabs/class-settings-tab-help.php',
+        'class-settings-tab-cleanup'        => 'includes/admin/pages/settings/tabs/class-settings-tab-cleanup.php',
+        'class-settings-page'               => 'includes/admin/pages/settings/class-settings-page.php',
+
+    ];
+
+    // constants for component files
+    private const COMPONENT_FILES = [
+        //form
+        'interface-form-field'              => 'includes/form/interface-form-field.php', //interface for form field
+        'interface-value-provider'          => 'includes/form/interface-value-provider.php', //interface for providing form field values
+        'class-taxonomy-options-provider'   => 'includes/form/class-taxonomy-options-provider.php', //class for providing taxonomy terms as options for form fields
+        'class-global-option-value-provider'=> 'includes/form/class-global-option-value-provider.php', //class for providing form field values
+        'class-post-meta-value-provider'    => 'includes/form/class-post-meta-value-provider.php', //class for providing form field values
+        'class-field-sanitizer'             => 'includes/form/class-field-sanitizer.php',
+        'class-form-field'                  => 'includes/form/class-form-field.php', //final form field object
+        'class-field-registry'              => 'includes/form/class-field-registry.php',
+        'class-form-field-factory'          => 'includes/form/class-form-field-factory.php', //factory to create form fields
+        'class-content-builder'             => 'includes/form/class-form-content-builder.php', //base class to build form fields html
+        //shortcode
+        'class-shortcode-ajax-attributes'   => 'includes/shortcode/handlers/class-shortcode-ajax-attributes-provider.php',
+        'class-shortcode-params'            => 'includes/shortcode/handlers/class-shortcode-params-handler.php',
+        'class-shortcode-post-meta'         => 'includes/shortcode/handlers/class-shortcode-post-meta-handler.php',
+        'class-shortcode-query-args'        => 'includes/shortcode/handlers/class-shortcode-query-args-provider.php',
+        'class-shortcode'                   => 'includes/shortcode/class-shortcode.php',
+        'class-shortcode-generator'         => 'includes/shortcode/class-shortcode-generator.php',
+        //AJAX render
+        'class-ajax-helper'                 => 'includes/ajax-render/class-ajax-helper.php',
+        'class-ajax-query-builder'          => 'includes/ajax-render/class-ajax-query-builder.php',
+        'class-ajax-filter-menu-renderer'   => 'includes/ajax-render/class-ajax-filter-menu-renderer.php',
+        'class-ajax-layout-builder'         => 'includes/ajax-render/class-ajax-layout-builder.php',
+        'class-ajax-load-more-renderer'     => 'includes/ajax-render/class-ajax-load-more-renderer.php',  
+        'class-ajax-end-message-renderer'   => 'includes/ajax-render/class-ajax-end-message-renderer.php',  
+        'class-ajax-layout-renderer'        => 'includes/ajax-render/class-ajax-layout-renderer.php',
+        'class-ajax-frontend-render'        => 'includes/ajax-render/class-ajax-frontend-render.php',
+        //AJAX controller
+        'trait-ajax-request-verifier'       => 'includes/ajax-controller/trait-ajax-request-verifier.php',
+        'class-ajax-admin-controller'       => 'includes/ajax-controller/class-ajax-admin-controller.php',
+        'class-ajax-frontend-controller'    => 'includes/ajax-controller/class-ajax-frontend-controller.php',
+        'class-controller-registry'         => 'includes/ajax-controller/class-controller-registry.php',
+        //template-renderers
+        'template-base'                     => 'includes/template-renderers/class-template-base.php', //before templates, they extend it
+        'template-renderers'                => 'includes/template-renderers/class-template-hooks.php',
+        'post-template-factory'             => 'includes/template-renderers/class-post-template-factory.php',
+        //functions
+        'functions'                         => 'includes/functions.php',
+        //maintenance / compatibility
+        'updater'                           => 'includes/maintenance/class-updater.php',
+        'cleaner'                           => 'includes/maintenance/class-cleaner.php',
+        'deprecated-hooks-list'             => 'includes/deprecated/class-deprecated-hooks-list.php',
+        'deprecated-hooks-handler'          => 'includes/deprecated/class-deprecated-hooks-handler.php',
+    ];
+    
+
+    //construct expects instance of QAPL_File_Manager
+    public function __construct(QAPL_File_Manager_Interface $file_manager) {
+        $this->file_manager = $file_manager;
+    }
+    public function initialize_pages(): void{
+        $this->load_files(self::PAGE_FILES);
+    }
+
+    public function initialize_components(): void{
+        $this->load_files(self::COMPONENT_FILES);
+    }
+
+    private function load_files(array $files): void{
+        //refactoring class        
+        if (class_exists('QAPL_Refactoring_Helper')) {
+            $dev_file_replacer = new QAPL_Refactoring_Helper($this->file_manager);
+        }else{
+            $dev_file_replacer = false;
+        }
+        foreach ($files as $file) {
+            if($dev_file_replacer){
+                $dev_file = $dev_file_replacer->get_new_file($file);
+                if(!empty($dev_file)){
+                    $file = $dev_file;
+                }
+            }
+            $path = $this->file_manager->file_exists($file);
+            if ($path !== false) {
+                require_once $path;
+            }
+        }
+    }
+}
